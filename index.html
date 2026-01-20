@@ -4,6 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SECURE TRANSMISSION</title>
+<script>
+    (function() {
+        const currentUrl = window.location.href.toLowerCase();
+        const restrictedZones = ['clue-3', 'clue-4', 'final', 'level-3', 'level-4'];
+        
+        if (restrictedZones.some(zone => currentUrl.includes(zone))) {
+            window.location.replace("clue-1.html");
+        }
+    })();
+</script>
 <style>
     body {
         margin: 0;
@@ -44,7 +54,6 @@
         padding-bottom: 10px;
     }
 
-    /* CANVAS VISUALIZER */
     #audio-canvas {
         width: 100%;
         height: 150px;
@@ -91,7 +100,6 @@
         font-weight: bold;
     }
 
-    /* CRT Scanline */
     .scanlines {
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
@@ -104,7 +112,6 @@
         z-index: 10;
     }
 
-    /* Grid overlay for tech feel */
     .grid-overlay {
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
@@ -124,7 +131,6 @@
 <div id="container">
     <div class="grid-overlay"></div>
     <h2>AUDIO DECRYPTOR</h2>
-    <!-- Updated Label -->
     <div class="sub-header">FREQ: 992.45 MHz // ENCRYPTION: V2-SECURE</div>
     
     <canvas id="audio-canvas" width="600" height="150"></canvas>
@@ -144,13 +150,10 @@
     let animationId = null;
     let time = 0;
 
-    // The Sequence to Speak
     const message = "The first two steps lift you to the sky, Look above twice to start the journey and use only that. You found the first clue, but that is not all, The next is waiting on Sticky Note Wall";
 
-    // ---------------- CANVAS ANIMATION ----------------
     function draw() {
-        // Clear canvas
-        ctx.fillStyle = 'rgba(0, 17, 0, 0.2)'; // Fade effect
+        ctx.fillStyle = 'rgba(0, 17, 0, 0.2)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         ctx.lineWidth = 2;
@@ -166,18 +169,14 @@
             let y = 0;
             
             if (isPlaying) {
-                // Active Voice Simulation (Complex Sine Wave)
-                // Combine multiple sine waves + random noise to simulate voice spectrum
                 const noise = (Math.random() - 0.5) * 10;
                 const freq1 = Math.sin(x * 0.05 + time * 0.5);
                 const freq2 = Math.sin(x * 0.1 + time * 2);
                 
-                // Envelope (makes it look like a packet of sound)
                 const envelope = Math.sin(time * 0.1) * 30 + 30; 
                 
                 y = cy + (freq1 * freq2 * envelope) + noise;
             } else {
-                // Flatline / Standby (Small jitter)
                 y = cy + (Math.random() - 0.5) * 2; 
             }
 
@@ -186,9 +185,8 @@
         }
 
         ctx.stroke();
-        ctx.shadowBlur = 0; // Reset shadow for performance
+        ctx.shadowBlur = 0;
 
-        // Draw Center Line
         ctx.strokeStyle = 'rgba(0, 255, 65, 0.2)';
         ctx.lineWidth = 1;
         ctx.beginPath();
@@ -200,10 +198,8 @@
         animationId = requestAnimationFrame(draw);
     }
 
-    // Start Idle Animation
     draw();
 
-    // ---------------- AUDIO HANDLER ----------------
     playBtn.addEventListener('click', () => {
         if (isPlaying) return;
         
@@ -211,26 +207,6 @@
         const voices = speechSynthesis.getVoices();
         let voice = null;
 
-        // ============================================================
-        //  VOICE OPTION 1: FEMALE (Currently Commented Out)
-        // ============================================================
-        /*
-        utterance.pitch = 1.2; 
-        utterance.rate = 0.9;
-        utterance.volume = 1;
-
-        voice = voices.find(v => 
-            v.name.includes('Google US English') || 
-            v.name.includes('Zira') || 
-            v.name.includes('Samantha') ||
-            v.name.includes('Female')
-        );
-        */
-
-        // ============================================================
-        //  VOICE OPTION 2: MALE (Currently Active)
-        // ============================================================
-        
         utterance.pitch = 0.8; 
         utterance.rate = 0.85;
         utterance.volume = 1;
@@ -241,9 +217,6 @@
             v.name.includes('Google UK English Male')
         );
         
-        // ============================================================
-
-        // Fallback if specific voice preference not found
         if (!voice) voice = voices.find(v => v.lang.includes('en'));
         if (voice) utterance.voice = voice;
 
@@ -253,7 +226,6 @@
             playBtn.textContent = "TRANSMITTING...";
             statusEl.textContent = ">> DECODING AUDIO PACKET <<";
             statusEl.style.color = "#00ff41";
-            // Flash canvas border
             canvas.style.borderColor = "#fff";
             setTimeout(() => canvas.style.borderColor = "#00ff41", 200);
         };
@@ -269,11 +241,8 @@
         window.speechSynthesis.speak(utterance);
     });
 
-    // Force load voices fix
     window.speechSynthesis.onvoiceschanged = () => {};
 </script>
 
 </body>
-
 </html>
-
